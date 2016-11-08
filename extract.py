@@ -8,6 +8,15 @@ import bs4 as BeautifulSoup
 sports_flow = {"Swimming": 23, "Running": 1, "Motocross": 54, "Renf Muscu": 34, "Cycling": 2}
 sports_ppt = {"Swimming": 10650934, "Running": 10650925, "Motocross": 10658605, "Renf Muscu": 10731409, "Cycling": 10650928}
 
+def sanitize_string(string):
+	return string.replace('\n', '').replace('\r', '').replace('\t', '').strip()
+
+def check_sports(text):
+	if sanitize_string(text) in ["Swimming", "Running", "Motocross", "Renf Muscu", "Cycling"]:
+		return True
+
+	return False
+
 def url_post(url, post):
 	r = session.post(url, post)
 	return r
@@ -48,16 +57,7 @@ def export_activity(sport, id):
 
 def parse_activities(html):
 	soup = BeautifulSoup.BeautifulSoup(html, "html.parser")
-	inputs = soup.find_all('input', attrs={"name": "calendarItemName"})
-	links = soup.find_all('a', href=re.compile("id="))
-
-	n = 0
-
-	for i in inputs:
-		sport = i['value']
-		n += 1
-
-	print("Found " + str(n) + " activities")
+	links = soup.find_all('a', href=re.compile("id="), text=check_sports)
 
 	n = 0
 
@@ -65,10 +65,10 @@ def parse_activities(html):
 		link = l['href'].partition("id=")[2];
 		n += 1
 
-	print("Found " + str(n) + " activities links")
+	print("Found " + str(n) + " activities")
 
 	for i in range(n):
-		export_activity(inputs[i]['value'], links[i]['href'].partition("id=")[2])
+		export_activity(sanitize_string(links[i].text), links[i]['href'].partition("id=")[2])
 
 def main(argv):
 	global session
