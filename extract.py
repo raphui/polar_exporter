@@ -2,6 +2,7 @@
 
 import sys
 import requests
+import bs4 as BeautifulSoup
 
 def url_post(url, post):
 	r = session.post(url, post)
@@ -17,7 +18,7 @@ def retrieve_activities(start_date, end_date):
 	post = {"startDate": start_date, "endDate": end_date}
 	reply = url_get(url, post)
 	print(reply.status_code)
-	print(reply.text)
+	return reply.text
 
 def login(email, password):
 	print("Login, status: ")
@@ -25,6 +26,10 @@ def login(email, password):
 	post = {"email": email, "password": password, ".action": "login", "tz": "0"}
 	reply = url_post(url, post)
 	print(reply.status_code)
+
+def parse_activities(html):
+	soup = BeautifulSoup.BeautifulSoup(html, "html.parser")
+	print(soup.find_all('input', attrs={"name": "calendarItemName"}))
 
 def main(argv):
 	global session
@@ -36,7 +41,8 @@ def main(argv):
 	session = requests.Session()
 
 	login(argv[1], argv[2])
-	retrieve_activities(argv[3], argv[4])
+	html = retrieve_activities(argv[3], argv[4])
+	parse_activities(html)
 
 if __name__ == "__main__":
 	main(sys.argv)
