@@ -1,31 +1,38 @@
-#!/usr/bin/python3
+#!/Library/Frameworks/Python.framework/Versions/3.5/bin/python3
 
 import sys
 import requests
 
 def url_post(url, post):
-	r = requests.post(url, post)
-	return r.text
+	r = session.post(url, post)
+	return r
 
 def url_get(url, get):
-	r = requests.post(url, get)
-	return r.text
+	r = session.get(url, params=get)
+	return r
 
 def retrieve_sessions(start_date, end_date):
+	print("Retrieve session, status: ")
 	url = "https://www.polarpersonaltrainer.com/user/calendar/inc/listview.ftl"
 	post = {"startDate": start_date, "endDate": end_date}
 	reply = url_get(url, post)
+	print(reply.status_code)
+	print(reply.text)
 
 def login(email, password):
+	print("Login, status: ")
 	url = "https://www.polarpersonaltrainer.com/index.ftl"
 	post = {"email": email, "password": password, ".action": "login", "tz": "0"}
 	reply = url_post(url, post)
-	print (reply)
+	print(reply.status_code)
 
 def main(argv):
 	if (len(argv) < 5):
 		print("usage: " + argv[0] + " email password start_date end_date")
 		sys.exit(1)
+
+	global session
+	session = requests.Session()
 
 	login(argv[1], argv[2])
 	retrieve_sessions(argv[3], argv[4])
