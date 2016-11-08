@@ -18,6 +18,7 @@ def retrieve_activities(start_date, end_date):
 	post = {"startDate": start_date, "endDate": end_date}
 	reply = url_get(url, post)
 	print(reply.status_code)
+	print(reply.text)
 	return reply.text
 
 def login(email, password):
@@ -29,7 +30,17 @@ def login(email, password):
 
 def parse_activities(html):
 	soup = BeautifulSoup.BeautifulSoup(html, "html.parser")
-	print(soup.find_all('input', attrs={"name": "calendarItemName"}))
+	inputs = soup.find_all('input', attrs={"name": "calendarItemName"})
+	links = soup.find_all('a', href=True)
+
+	for i in inputs:
+		print(i['value'])
+
+	for l in links:
+		if "#" in l['href']:
+			continue
+
+		print(l['href'])
 
 def main(argv):
 	global session
