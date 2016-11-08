@@ -1,6 +1,7 @@
 #!/Library/Frameworks/Python.framework/Versions/3.5/bin/python3
 
 import sys
+import re
 import requests
 import bs4 as BeautifulSoup
 
@@ -18,7 +19,6 @@ def retrieve_activities(start_date, end_date):
 	post = {"startDate": start_date, "endDate": end_date}
 	reply = url_get(url, post)
 	print(reply.status_code)
-	print(reply.text)
 	return reply.text
 
 def login(email, password):
@@ -31,14 +31,23 @@ def login(email, password):
 def parse_activities(html):
 	soup = BeautifulSoup.BeautifulSoup(html, "html.parser")
 	inputs = soup.find_all('input', attrs={"name": "calendarItemName"})
-	links = soup.find_all('a', href=True)
+	links = soup.find_all('a', href=re.compile("id="))
+
+	n = 0
 
 	for i in inputs:
-		print(i['value'])
+		sport = i['value']
+		n += 1
+
+	print("Found " + str(n) + " activities")
+
+	n = 0
 
 	for l in links:
-		if "#" in l['href']:
-			continue
+		link = l['href'].partition("id=")[2];
+		n += 1
+
+	print("Found " + str(n) + " activities links")
 
 		print(l['href'])
 
