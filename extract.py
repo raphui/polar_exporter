@@ -7,10 +7,14 @@ def url_post(url, post):
 	r = requests.post(url, post)
 	return r.text
 
+def url_get(url, get):
+	r = requests.post(url, get)
+	return r.text
+
 def retrieve_sessions(start_date, end_date):
 	url = "https://www.polarpersonaltrainer.com/user/calendar/inc/listview.ftl"
 	post = {"startDate": start_date, "endDate": end_date}
-	reply = url_post(url, post)
+	reply = url_get(url, post)
 
 def login(email, password):
 	url = "https://www.polarpersonaltrainer.com/index.ftl"
