@@ -27,11 +27,12 @@ def login(email, password):
 	print(reply.status_code)
 
 def main(argv):
+	global session
+
 	if (len(argv) < 5):
 		print("usage: " + argv[0] + " email password start_date end_date")
 		sys.exit(1)
 
-	global session
 	session = requests.Session()
 
 	login(argv[1], argv[2])
