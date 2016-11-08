@@ -11,8 +11,8 @@ def url_get(url, get):
 	r = session.get(url, params=get)
 	return r
 
-def retrieve_sessions(start_date, end_date):
-	print("Retrieve session, status: ")
+def retrieve_activities(start_date, end_date):
+	print("Retrieve activities, status: ")
 	url = "https://www.polarpersonaltrainer.com/user/calendar/inc/listview.ftl"
 	post = {"startDate": start_date, "endDate": end_date}
 	reply = url_get(url, post)
@@ -36,7 +36,7 @@ def main(argv):
 	session = requests.Session()
 
 	login(argv[1], argv[2])
-	retrieve_sessions(argv[3], argv[4])
+	retrieve_activities(argv[3], argv[4])
 
 if __name__ == "__main__":
 	main(sys.argv)
