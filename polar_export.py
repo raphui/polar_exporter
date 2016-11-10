@@ -45,6 +45,11 @@ def check_sports(text):
 		return True
 	return False
 
+def get_export_status(html):
+	soup = BeautifulSoup.BeautifulSoup(html, "html.parser")
+	prop = soup.find_all('prop')
+	return prop[0].text
+
 def url_post(url, post):
 	r = session.post(url, post)
 	return r
@@ -54,7 +59,7 @@ def url_get(url, get):
 	return r
 
 def custom_sports_mapping(filepath):
-	print("Mapping custom sports")
+	print("[+] Mapping custom sports")
 	json_data = open(filepath).read()
 	json_object = json.loads(json_data)
 	for sport in json_object.items():
@@ -62,14 +67,14 @@ def custom_sports_mapping(filepath):
 		sports_flow[sport[0]] = id
 
 def load_sports_flow():
-	print("Loading sports flow list for JSON files")
+	print("[+] Loading sports flow list for JSON files")
 	json_data = open(sports_flow_path).read()
 	json_object = json.loads(json_data)
 	for sport in json_object.items():
 		sports_flow[sport[0]] = sport[1]
 
 def retrieve_sports_ppt():
-	print("Retrieving sports list for Polar Personnel Trainer: ")
+	print("[+] Retrieving sports list for Polar Personnel Trainer: ")
 	url = url_list["sports_list"]
 	reply = url_get(url, "")
 	html =	reply.text
@@ -83,23 +88,32 @@ def retrieve_sports_ppt():
 		sports_ppt[l.text] = int(link)
 		n += 1
 
-	print("Found " + str(n) + " sports")
+	print("[+] Found " + str(n) + " sports")
 
 
 def retrieve_activities(start_date, end_date):
-	print("Retrieving activities, status: ")
+	print("[+] Retrieving activities, status: ", end="")
 	url = url_list["activities_list"]
 	post = {"startDate": start_date, "endDate": end_date}
 	reply = url_get(url, post)
-	print(reply.status_code)
+
+	if (reply.status_code == 200):
+		print("OK")
+	else:
+		print("KO")
+
 	return reply.text
 
 def login(email, password):
-	print("Logging in, status: ")
+	print("[+] Logging in, status: ", end="")
 	url = url_list["login"]
 	post = {"email": email, "password": password, ".action": "login", "tz": "0"}
 	reply = url_post(url, post)
-	print(reply.status_code)
+
+	if (reply.status_code == 200):
+		print("OK")
+	else:
+		print("KO")
 
 def export_activity(sport, id):
 	url = url_list["export_activity"]
@@ -113,7 +127,8 @@ def export_activity(sport, id):
 
 	reply = session.post(url, request, headers=headers)
 
-	print(reply.status_code)
+	status = get_export_status(reply.text)
+	return status
 
 
 def parse_activities(html):
@@ -126,10 +141,11 @@ def parse_activities(html):
 		link = l['href'].partition("id=")[2]
 		n += 1
 
-	print("Found " + str(n) + " activities")
+	print("[+] Found " + str(n) + " activities")
 
 	for i in range(n):
-		export_activity(sanitize_string(links[i].text), links[i]['href'].partition("id=")[2])
+		status = export_activity(sanitize_string(links[i].text), links[i]['href'].partition("id=")[2])
+		print("[!] Exporting activity n°" + str(i + 1) + " : " + status)
 
 def main(argv):
 	global session
