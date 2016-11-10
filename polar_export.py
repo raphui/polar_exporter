@@ -60,7 +60,6 @@ def custom_sports_mapping(filepath):
 	for sport in json_object.items():
 		id = sports_flow[sport[1]]
 		sports_flow[sport[0]] = id
-	print (sports_flow)
 
 def load_sports_flow():
 	print("Loading sports flow list for JSON files")
@@ -71,17 +70,17 @@ def load_sports_flow():
 
 def retrieve_sports_ppt():
 	print("Retrieving sports list for Polar Personnel Trainer: ")
-	url = url_list["sports_list"];
-	reply = url_get(url, "");
-	html =	reply.text;
+	url = url_list["sports_list"]
+	reply = url_get(url, "")
+	html =	reply.text
 	soup = BeautifulSoup.BeautifulSoup(html, "html.parser")
 	links = soup.find_all('a', href=re.compile("id="))
 
 	n = 0
 
 	for l in links:
-		link = l['href'].partition("id=")[2];
-		sports_ppt[l.text] = int(link);
+		link = l['href'].partition("id=")[2]
+		sports_ppt[l.text] = int(link)
 		n += 1
 
 	print("Found " + str(n) + " sports")
@@ -89,7 +88,7 @@ def retrieve_sports_ppt():
 
 def retrieve_activities(start_date, end_date):
 	print("Retrieving activities, status: ")
-	url = url_list["activities_list"];
+	url = url_list["activities_list"]
 	post = {"startDate": start_date, "endDate": end_date}
 	reply = url_get(url, post)
 	print(reply.status_code)
@@ -97,13 +96,13 @@ def retrieve_activities(start_date, end_date):
 
 def login(email, password):
 	print("Logging in, status: ")
-	url = url_list["login"];
+	url = url_list["login"]
 	post = {"email": email, "password": password, ".action": "login", "tz": "0"}
 	reply = url_post(url, post)
 	print(reply.status_code)
 
 def export_activity(sport, id):
-	url = url_list["export_activity"];
+	url = url_list["export_activity"]
 	headers = {
 		'X-Requested-With': 'XMLHttpRequest',
 		'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36',
@@ -124,7 +123,7 @@ def parse_activities(html):
 	n = 0
 
 	for l in links:
-		link = l['href'].partition("id=")[2];
+		link = l['href'].partition("id=")[2]
 		n += 1
 
 	print("Found " + str(n) + " activities")
