@@ -1,10 +1,29 @@
 #!/usr/bin/python3
 
+"""Polar exporter.
+
+Usage:
+  polar_export.py LOGIN PASSWORD START_DATE END_DATE [--custom=<filepath>]
+  polar_export.py (-h | --help)
+
+Arguments:
+  LOGIN		Polar personnal trainer login
+  PASSWORD	Polar personnal trainer password
+  START_DATE	Start date: dd.MM.YYYY
+  END_DATE	End date: dd.MM.YYYY
+
+Options:
+  -h --help     Show this screen.
+  -c --custom=<filepath>   List for sports that is in Polar Personnal Trainer but not in Polar Flow sports list.
+"""
+
 import sys
 import re
+import copy
 import json
 import requests
 import bs4 as BeautifulSoup
+from docopt import docopt
 
 sports_flow_path = "sports_flow.json"
 
@@ -24,7 +43,6 @@ def sanitize_string(string):
 def check_sports(text):
 	if sanitize_string(text) in ["Swimming", "Running", "Motocross", "Renf Muscu", "Cycling"]:
 		return True
-
 	return False
 
 def url_post(url, post):
@@ -35,11 +53,21 @@ def url_get(url, get):
 	r = session.get(url, params=get)
 	return r
 
+def custom_sports_mapping(filepath):
+	print("Mapping custom sports")
+	json_data = open(filepath).read()
+	json_object = json.loads(json_data)
+	for sport in json_object.items():
+		id = sports_flow[sport[1]]
+		sports_flow[sport[0]] = id
+	print (sports_flow)
+
 def load_sports_flow():
 	print("Loading sports flow list for JSON files")
 	json_data = open(sports_flow_path).read()
 	json_object = json.loads(json_data)
-	sports_flow = json_object
+	for sport in json_object.items():
+		sports_flow[sport[0]] = sport[1]
 
 def retrieve_sports_ppt():
 	print("Retrieving sports list for Polar Personnel Trainer: ")
@@ -107,18 +135,18 @@ def parse_activities(html):
 def main(argv):
 	global session
 
-	if (len(argv) < 5):
-		print("usage: " + argv[0] + " email password start_date end_date")
-		sys.exit(1)
-
 	session = requests.Session()
 
-	login(argv[1], argv[2])
+	login(argv['LOGIN'], argv['PASSWORD'])
 	load_sports_flow()
 
+	if (argv['--custom'] is not None):
+		custom_sports_mapping(argv['--custom'])
+
 	retrieve_sports_ppt()
-	html = retrieve_activities(argv[3], argv[4])
+	html = retrieve_activities(argv['START_DATE'], argv['END_DATE'])
 	parse_activities(html)
 
 if __name__ == "__main__":
-	main(sys.argv)
+	arguments = docopt(__doc__, version='Polar Exporter 1.0')
+	main(arguments)
