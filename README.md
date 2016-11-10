@@ -1,5 +1,5 @@
 # polar_extractor
-Export data from polar personnal trainer to polar flow
+Export data from polar personal trainer to polar flow
 
 ## Installation
 pip3 install requests
@@ -16,9 +16,9 @@ pip3 install beautifulsoup4
 
 Arguments:
 
-  LOGIN         Polar personnal trainer login
+  LOGIN         Polar personal trainer login
   
-  PASSWORD      Polar personnal trainer password
+  PASSWORD      Polar personal trainer password
   
   START_DATE    Start date: dd.MM.YYYY
   
@@ -28,5 +28,5 @@ Options:
 
   -h --help     Show this screen.
   
-  -c --custom=<filepath>   List for sports that is in Polar Personnal Trainer but not in Polar Flow sports list.
+  -c --custom=<filepath>   List for sports that is in Polar Personal Trainer but not in Polar Flow sports list.
 ```

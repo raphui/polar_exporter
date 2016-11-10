@@ -7,14 +7,14 @@ Usage:
   polar_export.py (-h | --help)
 
 Arguments:
-  LOGIN		Polar personnal trainer login
-  PASSWORD	Polar personnal trainer password
+  LOGIN		Polar personal trainer login
+  PASSWORD	Polar personal trainer password
   START_DATE	Start date: dd.MM.YYYY
   END_DATE	End date: dd.MM.YYYY
 
 Options:
   -h --help     Show this screen.
-  -c --custom=<filepath>   List for sports that is in Polar Personnal Trainer but not in Polar Flow sports list.
+  -c --custom=<filepath>   List for sports that is in Polar Personal Trainer but not in Polar Flow sports list.
 """
 
 import sys
